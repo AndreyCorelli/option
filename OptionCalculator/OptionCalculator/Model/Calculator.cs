@@ -46,6 +46,9 @@ namespace OptionCalculator.Model
         private string filePath;
         private List<double> simPrices = new List<double>();
         private double premium;
+        private double hv;
+
+        public double HV => hv;
 
         public double CalcPremium(SourceCandles candles, bool detrend,
             Side side,
@@ -95,9 +98,10 @@ namespace OptionCalculator.Model
 
         private void CalculateDistribution(bool detrend)
         {
-            var deltas = detrend
-                ? candles.detrendedCandles.Select(c => Math.Abs(c.Close - c.Open) / c.Open).OrderBy(c => c).ToList()
-                : candles.sourceCandles.Select(c => (c.Close - c.Open) / c.Open).OrderBy(c => c).ToList();
+            var srcCandles = detrend ? candles.detrendedCandles : candles.sourceCandles;
+            CalcHistVol(srcCandles);
+            
+            var deltas = srcCandles.Select(c => (c.Close - c.Open) / c.Open).OrderBy(c => c).ToList();
             var lastDelta = deltas[0] - 1;
             for (var i = 0; i < deltas.Count; i++)
             {
@@ -108,6 +112,26 @@ namespace OptionCalculator.Model
                     distribution.Add(new QuantProb(deltas[i], prob));
                 lastDelta = deltas[i];
             }
+        }
+
+        private void CalcHistVol(List<Candle> srcCandles)
+        {
+            if (srcCandles.Count < 2) return;
+
+            var days = srcCandles.Count;
+            var b = 0.0;
+            for (var i = 1; i < days; i++)
+                b += Math.Log(srcCandles[i].Close / srcCandles[i - 1].Close);
+            b /= (days - 1);
+
+            var c = 0.0;
+            for (var i = 1; i < days; i++)
+            {
+                var d = Math.Log(srcCandles[i].Close / srcCandles[i - 1].Close) - b;
+                c += d * d;
+            }
+            c /= (days - 2);
+            hv = Math.Sqrt(c) * Math.Sqrt(days) * 100;
         }
 
         private double GetDelta()
