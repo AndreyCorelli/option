@@ -46,7 +46,7 @@ namespace OptionCalculator.Model
                     var c = data[i].price;
                     var h = Math.Max(o, c);
                     var l = Math.Min(o, c);
-                    sw.WriteLine($"{data[i - 1].date:yyyy.MM.dd} 00:00;{DoubleToString(o)};{DoubleToString(h)};{DoubleToString(l)};{DoubleToString(c)}");
+                    sw.WriteLine($"{data[i - 1].date:yyyy.MM.dd} 00:00,{DoubleToString(o)},{DoubleToString(h)},{DoubleToString(l)},{DoubleToString(c)},1440");
                 }
         }
 
