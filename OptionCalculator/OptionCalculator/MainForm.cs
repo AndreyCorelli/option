@@ -39,6 +39,8 @@ namespace OptionCalculator
             var prem = calc.CalcPremium(candles, cbDetrend.Checked, side, volume, term, 
                 price, strike, ExecutablePath.Combine("option_test.txt"));
             tbPremium.Text = $"{prem:F4}";
+            tbHv.Text = $"{calc.HV:F4}";
+            //var mhv = calc.CalculateModelledVolatility();
         }
 
         private void btnMakeSeries_Click(object sender, EventArgs e)

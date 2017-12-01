@@ -47,17 +47,20 @@
             this.tbPath = new System.Windows.Forms.TextBox();
             this.btnExplore = new System.Windows.Forms.Button();
             this.pageResult = new System.Windows.Forms.TabPage();
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.tabPgTestSeries = new System.Windows.Forms.TabPage();
-            this.btnMakeSeries = new System.Windows.Forms.Button();
-            this.tbTestTerm = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.tbTestStart = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.tbTestDailyDeltaPercent = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.tbTestStart = new System.Windows.Forms.TextBox();
+            this.tbTestTerm = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.btnMakeSeries = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.tbHv = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.pageSrc.SuspendLayout();
             this.panelPath.SuspendLayout();
@@ -78,6 +81,9 @@
             // 
             // pageSrc
             // 
+            this.pageSrc.Controls.Add(this.label11);
+            this.pageSrc.Controls.Add(this.tbHv);
+            this.pageSrc.Controls.Add(this.label10);
             this.pageSrc.Controls.Add(this.cbSide);
             this.pageSrc.Controls.Add(this.tbPremium);
             this.pageSrc.Controls.Add(this.label5);
@@ -181,7 +187,7 @@
             this.tbVolume.Name = "tbVolume";
             this.tbVolume.Size = new System.Drawing.Size(100, 22);
             this.tbVolume.TabIndex = 6;
-            this.tbVolume.Text = "5";
+            this.tbVolume.Text = "1";
             // 
             // label2
             // 
@@ -198,7 +204,7 @@
             this.tbStrike.Name = "tbStrike";
             this.tbStrike.Size = new System.Drawing.Size(100, 22);
             this.tbStrike.TabIndex = 4;
-            this.tbStrike.Text = "8300.0";
+            this.tbStrike.Text = "1000.0";
             // 
             // label1
             // 
@@ -215,7 +221,7 @@
             this.tbPrice.Name = "tbPrice";
             this.tbPrice.Size = new System.Drawing.Size(100, 22);
             this.tbPrice.TabIndex = 2;
-            this.tbPrice.Text = "8300.0";
+            this.tbPrice.Text = "1000.0";
             // 
             // panelPath
             // 
@@ -256,11 +262,6 @@
             this.pageResult.Text = "Result";
             this.pageResult.UseVisualStyleBackColor = true;
             // 
-            // openFileDialog
-            // 
-            this.openFileDialog.Filter = "*.csv;*.txt|*.txt;*.csv|*.*|*.*";
-            this.openFileDialog.FilterIndex = 0;
-            // 
             // tabPgTestSeries
             // 
             this.tabPgTestSeries.Controls.Add(this.label9);
@@ -278,49 +279,14 @@
             this.tabPgTestSeries.Text = "Test Series";
             this.tabPgTestSeries.UseVisualStyleBackColor = true;
             // 
-            // btnMakeSeries
+            // label9
             // 
-            this.btnMakeSeries.Location = new System.Drawing.Point(11, 121);
-            this.btnMakeSeries.Name = "btnMakeSeries";
-            this.btnMakeSeries.Size = new System.Drawing.Size(187, 31);
-            this.btnMakeSeries.TabIndex = 11;
-            this.btnMakeSeries.Text = "Make Series";
-            this.btnMakeSeries.UseVisualStyleBackColor = true;
-            this.btnMakeSeries.Click += new System.EventHandler(this.btnMakeSeries_Click);
-            // 
-            // tbTestTerm
-            // 
-            this.tbTestTerm.Location = new System.Drawing.Point(98, 14);
-            this.tbTestTerm.Name = "tbTestTerm";
-            this.tbTestTerm.Size = new System.Drawing.Size(100, 22);
-            this.tbTestTerm.TabIndex = 13;
-            this.tbTestTerm.Text = "730";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 17);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(74, 17);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "term, days";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(42, 45);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(40, 17);
-            this.label7.TabIndex = 15;
-            this.label7.Text = "initial";
-            // 
-            // tbTestStart
-            // 
-            this.tbTestStart.Location = new System.Drawing.Point(98, 42);
-            this.tbTestStart.Name = "tbTestStart";
-            this.tbTestStart.Size = new System.Drawing.Size(100, 22);
-            this.tbTestStart.TabIndex = 14;
-            this.tbTestStart.Text = "1000.0";
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(204, 73);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(20, 17);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "%";
             // 
             // label8
             // 
@@ -339,14 +305,54 @@
             this.tbTestDailyDeltaPercent.TabIndex = 16;
             this.tbTestDailyDeltaPercent.Text = "0.5";
             // 
-            // label9
+            // label7
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(204, 73);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(20, 17);
-            this.label9.TabIndex = 18;
-            this.label9.Text = "%";
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(42, 45);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(40, 17);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "initial";
+            // 
+            // tbTestStart
+            // 
+            this.tbTestStart.Location = new System.Drawing.Point(98, 42);
+            this.tbTestStart.Name = "tbTestStart";
+            this.tbTestStart.Size = new System.Drawing.Size(100, 22);
+            this.tbTestStart.TabIndex = 14;
+            this.tbTestStart.Text = "1000.0";
+            // 
+            // tbTestTerm
+            // 
+            this.tbTestTerm.Location = new System.Drawing.Point(98, 14);
+            this.tbTestTerm.Name = "tbTestTerm";
+            this.tbTestTerm.Size = new System.Drawing.Size(100, 22);
+            this.tbTestTerm.TabIndex = 13;
+            this.tbTestTerm.Text = "730";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 17);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(74, 17);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "term, days";
+            // 
+            // btnMakeSeries
+            // 
+            this.btnMakeSeries.Location = new System.Drawing.Point(11, 121);
+            this.btnMakeSeries.Name = "btnMakeSeries";
+            this.btnMakeSeries.Size = new System.Drawing.Size(187, 31);
+            this.btnMakeSeries.TabIndex = 11;
+            this.btnMakeSeries.Text = "Make Series";
+            this.btnMakeSeries.UseVisualStyleBackColor = true;
+            this.btnMakeSeries.Click += new System.EventHandler(this.btnMakeSeries_Click);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.Filter = "*.csv;*.txt|*.txt;*.csv|*.*|*.*";
+            this.openFileDialog.FilterIndex = 0;
             // 
             // saveFileDialog
             // 
@@ -354,6 +360,32 @@
             this.saveFileDialog.Filter = "*.csv;*.txt|*.txt;*.csv|*.*|*.*";
             this.saveFileDialog.FilterIndex = 0;
             this.saveFileDialog.Title = "Save Time Series";
+            // 
+            // tbHv
+            // 
+            this.tbHv.Location = new System.Drawing.Point(71, 184);
+            this.tbHv.Name = "tbHv";
+            this.tbHv.Size = new System.Drawing.Size(100, 22);
+            this.tbHv.TabIndex = 16;
+            this.tbHv.Text = "0";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 187);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(27, 17);
+            this.label10.TabIndex = 15;
+            this.label10.Text = "HV";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(177, 187);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(20, 17);
+            this.label11.TabIndex = 17;
+            this.label11.Text = "%";
             // 
             // MainForm
             // 
@@ -406,6 +438,9 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnMakeSeries;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox tbHv;
+        private System.Windows.Forms.Label label10;
     }
 }
 

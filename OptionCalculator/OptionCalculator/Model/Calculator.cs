@@ -62,8 +62,27 @@ namespace OptionCalculator.Model
             this.detrend = detrend;
             this.side = side;
             filePath = fileNameToStore;
-            CalculateDistribution(detrend);
+            CalculateDistribution();
             return DoCalcPremium();
+        }
+
+        public double CalculateModelledVolatility()
+        {
+            const int iterations = 1000;
+            double sum = 0;
+            for (var i = 0; i < iterations; i++)
+                sum += CalcModelledVolIteration();
+            var mhv = sum / iterations;
+            return mhv;
+        }
+
+        private double CalcModelledVolIteration()
+        {
+            var steps = (int)term;
+            var deltas = new List<double>(steps);
+            for (var i = 0; i < steps; i++)
+                deltas.Add(100 * GetDelta());
+            return CalcHvByDeltas(deltas);
         }
 
         private double DoCalcPremium()
@@ -96,7 +115,7 @@ namespace OptionCalculator.Model
             return pl < 0 ? 0 : pl;
         }
 
-        private void CalculateDistribution(bool detrend)
+        private void CalculateDistribution()
         {
             var srcCandles = detrend ? candles.detrendedCandles : candles.sourceCandles;
             CalcHistVol(srcCandles);
@@ -107,7 +126,7 @@ namespace OptionCalculator.Model
             {
                 var prob = (i + 1.0) / deltas.Count;
                 if (Math.Abs(deltas[i] - lastDelta) < 0.00001)
-                    distribution[distribution.Count - 1] = new QuantProb(deltas[i], prob);
+                    distribution[distribution.Count - 1] = new QuantProb((deltas[i] + lastDelta) / 2, prob);
                 else
                     distribution.Add(new QuantProb(deltas[i], prob));
                 lastDelta = deltas[i];
@@ -116,22 +135,26 @@ namespace OptionCalculator.Model
 
         private void CalcHistVol(List<Candle> srcCandles)
         {
-            if (srcCandles.Count < 2) return;
+            if (srcCandles.Count < 3) return;
 
-            var days = srcCandles.Count;
-            var b = 0.0;
-            for (var i = 1; i < days; i++)
-                b += Math.Log(srcCandles[i].Close / srcCandles[i - 1].Close);
-            b /= (days - 1);
+            var deltas = new List<double>();
+            for (var i = 1; i < srcCandles.Count; i++)
+                deltas.Add(100 * (srcCandles[i].Close - srcCandles[i - 1].Close) / srcCandles[i - 1].Close);
+            hv = CalcHvByDeltas(deltas);
+        }
 
-            var c = 0.0;
-            for (var i = 1; i < days; i++)
+        private double CalcHvByDeltas(List<double> deltas)
+        {
+            var avg = deltas.Average();
+            var sum = 0.0;
+            foreach (var delta in deltas)
             {
-                var d = Math.Log(srcCandles[i].Close / srcCandles[i - 1].Close) - b;
-                c += d * d;
+                var d2 = delta - avg;
+                sum += d2 * d2;
             }
-            c /= (days - 2);
-            hv = Math.Sqrt(c) * Math.Sqrt(days) * 100;
+            sum /= deltas.Count - 1;
+            var sigma = Math.Sqrt(sum);
+            return sigma * Math.Sqrt(365);
         }
 
         private double GetDelta()
