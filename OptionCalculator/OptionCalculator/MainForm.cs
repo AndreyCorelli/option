@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using OptionCalculator.Model;
@@ -7,7 +8,7 @@ namespace OptionCalculator
 {
     public partial class MainForm : Form
     {
-        private SourceCandles candles = new SourceCandles();
+        private List<double> candles = new List<double>();
 
         public MainForm()
         {
@@ -21,23 +22,30 @@ namespace OptionCalculator
                 openFileDialog.FileName = tbPath.Text;
             if (openFileDialog.ShowDialog() != DialogResult.OK) return;
             tbPath.Text = openFileDialog.FileName;
-            if (!candles.ReadCandles(tbPath.Text))
+            candles = SourceCandles.ReadCandles(tbPath.Text);
+            if (candles.Count == 0)
                 MessageBox.Show("Source data was not read");
         }
 
         private void btnCalc_Click(object sender, EventArgs e)
         {
-            if (candles.sourceCandles.Count == 0) return;
+            if (candles.Count < 3) return;
 
-            var side = cbSide.SelectedIndex == 0 ? Side.Put : Side.Call;
-            var price = tbPrice.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform();
-            var strike = tbStrike.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform();
-            var term = tbTerm.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform();
-            var volume = tbVolume.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform();
+            var contract = new OptionContract
+            {
+                Side = cbSide.SelectedIndex == 0 ? Side.Put : Side.Call,
+                Price = tbPrice.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform(),
+                Strike = tbStrike.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform(),
+                Term = tbTerm.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform(),
+                Volume = tbVolume.Text.Replace(',', '.').Replace(" ", "").ToDoubleUniform(),
+                YearTradeDays = tbDaysInYear.Text.ToInt()
+            };
 
-            var calc = new Calculator();
-            var prem = calc.CalcPremium(candles, cbDetrend.Checked, side, volume, term, 
-                price, strike, ExecutablePath.Combine("option_test.txt"));
+            var calc = new Calculator
+            {
+                iterationsCount = tbIterations.Text.ToInt()
+            };
+            var prem = calc.CalcPremium(candles, cbDetrend.Checked, contract, ExecutablePath.ExecPath);
             tbPremium.Text = $"{prem:F4}";
             tbHv.Text = $"{calc.HV:F4}";
             //var mhv = calc.CalculateModelledVolatility();

@@ -54,7 +54,10 @@
     <Compile Include="Model\Calculator.cs" />
     <Compile Include="Model\Candle.cs" />
     <Compile Include="Model\ExecutablePath.cs" />
+    <Compile Include="Model\OptionContract.cs" />
     <Compile Include="Model\PriceHistoryMaker.cs" />
+    <Compile Include="Model\QuantProb.cs" />
+    <Compile Include="Model\Side.cs" />
     <Compile Include="Model\SourceCandles.cs" />
     <Compile Include="Model\UniFormatExtensions.cs" />
     <Compile Include="Program.cs" />

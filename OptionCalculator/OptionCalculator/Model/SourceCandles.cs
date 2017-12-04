@@ -1,19 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace OptionCalculator.Model
 {
-    public class SourceCandles
+    public static class SourceCandles
     {
-        public List<Candle> sourceCandles = new List<Candle>();
-
-        public List<Candle> detrendedCandles = new List<Candle>();
-
-        public bool ReadCandles(string path)
+        public static List<double> ReadCandles(string path)
         {
-            if (!File.Exists(path)) return false;
+            var prices = new List<double>();
+            if (!File.Exists(path)) return prices;
 
             var cndl = new List<Candle>();
 
@@ -28,23 +24,27 @@ namespace OptionCalculator.Model
                 }
             }
 
-            if (cndl.Count == 0) return false;
-            sourceCandles = cndl;
-            Detrend();
-            return true;
+            if (cndl.Count == 0) return ReadScalars(path);
+            prices.Add(cndl[0].Open);
+            foreach (var candle in cndl)
+                prices.Add(candle.Close);
+            return prices;
         }
 
-        private void Detrend()
+        private static List<double> ReadScalars(string path)
         {
-            var delta = sourceCandles.Last().Close - sourceCandles.First().Open;
-            delta /= sourceCandles.Count;
-            detrendedCandles = sourceCandles.Select((c, i) => new Candle
+            var prices = new List<double>();
+            using (var sr = new StreamReader(path, Encoding.ASCII))
             {
-                Open = c.Open - delta * (i + 1),
-                Close = c.Close - delta * (i + 1),
-                High = c.High - delta * (i + 1),
-                Low = c.Low - delta * (i + 1),
-            }).ToList();
+                while (!sr.EndOfStream)
+                {
+                    var line = sr.ReadLine();
+                    if (string.IsNullOrEmpty(line)) continue;
+                    var s = line.Trim().Replace(",", ".").ToDoubleUniformSafe();
+                    if (s.HasValue) prices.Add(s.Value);
+                }
+            }
+            return prices;
         }
     }
 }

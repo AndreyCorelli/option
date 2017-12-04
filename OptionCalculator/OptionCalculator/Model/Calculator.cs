@@ -8,60 +8,28 @@ using System.Text;
 
 namespace OptionCalculator.Model
 {
-    public enum Side
-    {
-        Call = 0, Put = 1
-    }
-
     public class Calculator
     {
-        public struct QuantProb
-        {
-            public double val;
-
-            public double p;
-
-            public QuantProb(double v, double p)
-            {
-                val = v;
-                this.p = p;
-            }
-
-            public override string ToString()
-            {
-                return $"{val}: {p}";
-            }
-        }
-
-        private SourceCandles candles;
-        private double volume;
-        private double term;
-        private double price;
-        private double strike;
+        private List<double> prices;
+        private OptionContract contract;
         private bool detrend;
-        private Dictionary<double, double> deltaByProb = new Dictionary<double, double>();
         private List<QuantProb> distribution = new List<QuantProb>();
         private readonly Random rand = new Random();
-        private Side side;
         private string filePath;
         private List<double> simPrices = new List<double>();
         private double premium;
-        private double hv;
+        private double hv;        
 
         public double HV => hv;
+        public int iterationsCount = 10000;
 
-        public double CalcPremium(SourceCandles candles, bool detrend,
-            Side side,
-            double volume, double term, double price, double strike, string fileNameToStore)
+        public double CalcPremium(List<double> prices, bool detrend,
+            OptionContract contract, string folder)
         {
-            this.candles = candles;
-            this.volume = volume;
-            this.term = term;
-            this.price = price;
-            this.strike = strike;
+            this.prices = prices;
+            this.contract = contract;
             this.detrend = detrend;
-            this.side = side;
-            filePath = fileNameToStore;
+            filePath = folder;
             CalculateDistribution();
             return DoCalcPremium();
         }
@@ -78,7 +46,7 @@ namespace OptionCalculator.Model
 
         private double CalcModelledVolIteration()
         {
-            var steps = (int)term;
+            var steps = (int) contract.Term;
             var deltas = new List<double>(steps);
             for (var i = 0; i < steps; i++)
                 deltas.Add(100 * GetDelta());
@@ -87,59 +55,70 @@ namespace OptionCalculator.Model
 
         private double DoCalcPremium()
         {
-            const int iterations = 10000;
             double sum = 0;
-            for (var i = 0; i < iterations; i++)
+            for (var i = 0; i < iterationsCount; i++)
             {
                 var p = CalcPremiumForIteration();
                 sum += p;
                 simPrices.Add(p);
             }
-            premium = sum / iterations;
+            premium = sum / iterationsCount;
             StoreInFile();
             return premium;
         }
 
         private double CalcPremiumForIteration()
         {
-            var p = price;
-            var steps = (int) term;
+            var p = contract.Price;
+            var steps = (int) contract.Term;
             for (var i = 0; i < steps; i++)
             {
                 var delta = GetDelta();
-                p += p * delta;
+                p = p * Math.Exp(delta);
                 if (p < 0.00001) p = 0.00001;
             }
-            var s = side == Side.Call ? 1 : -1;
-            var pl = s * volume * (p - price);
+            var s = contract.Side == Side.Call ? 1 : -1;
+            var pl = s * contract.Volume * (p - contract.Price);
             return pl < 0 ? 0 : pl;
         }
 
         private void CalculateDistribution()
         {
-            var srcCandles = detrend ? candles.detrendedCandles : candles.sourceCandles;
-            CalcHistVol(srcCandles);
-            
-            var deltas = srcCandles.Select(c => (c.Close - c.Open) / c.Open).OrderBy(c => c).ToList();
-            var lastDelta = deltas[0] - 1;
+            if (prices.Count < 3) return;
+            CalcHistVol();
+
+            var deltas = new List<double>(prices.Count - 1);
+            for (var i = 1; i < prices.Count; i++)
+                deltas.Add(Math.Log(prices[i] / prices[i - 1]));
+
+            if (detrend)
+                DetrendDeltas(deltas);
+            deltas.Sort();
+
+            //var lastDelta = deltas[0] - 1;
             for (var i = 0; i < deltas.Count; i++)
             {
                 var prob = (i + 1.0) / deltas.Count;
-                if (Math.Abs(deltas[i] - lastDelta) < 0.00001)
-                    distribution[distribution.Count - 1] = new QuantProb((deltas[i] + lastDelta) / 2, prob);
-                else
-                    distribution.Add(new QuantProb(deltas[i], prob));
-                lastDelta = deltas[i];
+                //if (Math.Abs(deltas[i] - lastDelta) < 0.00001)
+                //    distribution[distribution.Count - 1] = new QuantProb((deltas[i] + lastDelta) / 2, prob);
+                //else
+                distribution.Add(new QuantProb(deltas[i], prob));
+                //lastDelta = deltas[i];
             }
         }
 
-        private void CalcHistVol(List<Candle> srcCandles)
+        private static void DetrendDeltas(List<double> deltas)
         {
-            if (srcCandles.Count < 3) return;
+            var d = deltas.Average() / (deltas.Count - 1);
+            for (var i = 0; i < deltas.Count; i++)
+                deltas[i] = deltas[i] - d * i;
+        }
 
+        private void CalcHistVol()
+        {
             var deltas = new List<double>();
-            for (var i = 1; i < srcCandles.Count; i++)
-                deltas.Add(100 * (srcCandles[i].Close - srcCandles[i - 1].Close) / srcCandles[i - 1].Close);
+            for (var i = 1; i < prices.Count; i++)
+                deltas.Add(100 * (prices[i] - prices[i - 1]) / prices[i - 1]);
             hv = CalcHvByDeltas(deltas);
         }
 
@@ -159,30 +138,21 @@ namespace OptionCalculator.Model
 
         private double GetDelta()
         {
-            var sign = detrend ? (rand.Next(2) == 0 ? 1 : -1) : 1;
-            return sign * GetUnsignedDelta();
-        }
-
-        private double GetUnsignedDelta()
-        {
             var p = rand.NextDouble();
-            for (var i = 0; i < distribution.Count; i++)
-            {
-                if (!(distribution[i].p > p)) continue;
-                if (i > 0)
-                {
-                    var deltaP = (p - distribution[i - 1].p) / (distribution[i].p - distribution[i - 1].p);
-                    var val = distribution[i - 1].val + (distribution[i].val - distribution[i - 1].val) * deltaP;
-                    return val;
-                }
-                return distribution[0].val;
-            }
-            return distribution.Last().val;
+            var floatP = p * distribution.Count;
+            var floorP = (int) floatP;
+            if (floorP >= distribution.Count - 1)
+                return distribution.Last().val;
+
+            var shift = floatP - floorP;
+            var a = distribution[floorP].val;
+            var b = distribution[floorP + 1].val;
+            return a + (b - a) * shift;            
         }
 
         private void StoreInFile()
         {
-            using (var sw = new StreamWriter(filePath, false, Encoding.ASCII))
+            using (var sw = new StreamWriter(Path.Combine(filePath, "distribution.txt"), false, Encoding.ASCII))
                 foreach (var d in distribution)
                     sw.WriteLine($"{d.val:F4};{d.p:F4}");
             // sim prices
@@ -237,7 +207,7 @@ namespace OptionCalculator.Model
                 }
             }
 
-            bmp.Save(filePath + ".png", ImageFormat.Png);
+            bmp.Save(Path.Combine(filePath, "cumfunc.png"), ImageFormat.Png);
         }
     }
 }

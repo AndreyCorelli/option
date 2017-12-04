@@ -55,7 +55,8 @@ namespace OptionCalculator.Model
             data.Add(new PriceOnDate(startDate.Date, startPrice));
             for (var date = startDate.Date; date <= endDate; date = date.AddDays(1))
             {
-                startPrice += startPrice * NextGaussianDouble() * sigma;
+                //startPrice += startPrice * NextGaussianDouble() * sigma;
+                startPrice = startPrice * Math.Exp(NextGaussianDouble() * sigma);
                 if (startPrice <= 0)
                 { // hypothetically, the variable startPrice could be a negative number
                   // in this case we have to recalculate the entire time series

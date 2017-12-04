@@ -30,6 +30,9 @@
         {
             this.tabControl = new System.Windows.Forms.TabControl();
             this.pageSrc = new System.Windows.Forms.TabPage();
+            this.label11 = new System.Windows.Forms.Label();
+            this.tbHv = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.cbSide = new System.Windows.Forms.ComboBox();
             this.tbPremium = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -58,9 +61,10 @@
             this.btnMakeSeries = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.tbHv = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.tbDaysInYear = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.tbIterations = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.pageSrc.SuspendLayout();
             this.panelPath.SuspendLayout();
@@ -81,6 +85,10 @@
             // 
             // pageSrc
             // 
+            this.pageSrc.Controls.Add(this.label13);
+            this.pageSrc.Controls.Add(this.tbIterations);
+            this.pageSrc.Controls.Add(this.label12);
+            this.pageSrc.Controls.Add(this.tbDaysInYear);
             this.pageSrc.Controls.Add(this.label11);
             this.pageSrc.Controls.Add(this.tbHv);
             this.pageSrc.Controls.Add(this.label10);
@@ -106,6 +114,32 @@
             this.pageSrc.Text = "Source";
             this.pageSrc.UseVisualStyleBackColor = true;
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(177, 204);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(20, 17);
+            this.label11.TabIndex = 17;
+            this.label11.Text = "%";
+            // 
+            // tbHv
+            // 
+            this.tbHv.Location = new System.Drawing.Point(71, 201);
+            this.tbHv.Name = "tbHv";
+            this.tbHv.Size = new System.Drawing.Size(100, 22);
+            this.tbHv.TabIndex = 16;
+            this.tbHv.Text = "0";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 204);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(27, 17);
+            this.label10.TabIndex = 15;
+            this.label10.Text = "HV";
+            // 
             // cbSide
             // 
             this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -120,7 +154,7 @@
             // 
             // tbPremium
             // 
-            this.tbPremium.Location = new System.Drawing.Point(71, 156);
+            this.tbPremium.Location = new System.Drawing.Point(71, 173);
             this.tbPremium.Name = "tbPremium";
             this.tbPremium.Size = new System.Drawing.Size(100, 22);
             this.tbPremium.TabIndex = 13;
@@ -129,7 +163,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 159);
+            this.label5.Location = new System.Drawing.Point(6, 176);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(62, 17);
             this.label5.TabIndex = 12;
@@ -147,7 +181,7 @@
             // 
             // btnCalc
             // 
-            this.btnCalc.Location = new System.Drawing.Point(6, 107);
+            this.btnCalc.Location = new System.Drawing.Point(6, 124);
             this.btnCalc.Name = "btnCalc";
             this.btnCalc.Size = new System.Drawing.Size(165, 31);
             this.btnCalc.TabIndex = 10;
@@ -361,31 +395,39 @@
             this.saveFileDialog.FilterIndex = 0;
             this.saveFileDialog.Title = "Save Time Series";
             // 
-            // tbHv
+            // label12
             // 
-            this.tbHv.Location = new System.Drawing.Point(71, 184);
-            this.tbHv.Name = "tbHv";
-            this.tbHv.Size = new System.Drawing.Size(100, 22);
-            this.tbHv.TabIndex = 16;
-            this.tbHv.Text = "0";
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(3, 86);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(36, 17);
+            this.label12.TabIndex = 19;
+            this.label12.Text = "year";
             // 
-            // label10
+            // tbDaysInYear
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 187);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(27, 17);
-            this.label10.TabIndex = 15;
-            this.label10.Text = "HV";
+            this.tbDaysInYear.Location = new System.Drawing.Point(71, 83);
+            this.tbDaysInYear.Name = "tbDaysInYear";
+            this.tbDaysInYear.Size = new System.Drawing.Size(100, 22);
+            this.tbDaysInYear.TabIndex = 18;
+            this.tbDaysInYear.Text = "365";
             // 
-            // label11
+            // label13
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(177, 187);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(20, 17);
-            this.label11.TabIndex = 17;
-            this.label11.Text = "%";
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(222, 89);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(66, 17);
+            this.label13.TabIndex = 21;
+            this.label13.Text = "iterations";
+            // 
+            // tbIterations
+            // 
+            this.tbIterations.Location = new System.Drawing.Point(290, 86);
+            this.tbIterations.Name = "tbIterations";
+            this.tbIterations.Size = new System.Drawing.Size(100, 22);
+            this.tbIterations.TabIndex = 20;
+            this.tbIterations.Text = "10000";
             // 
             // MainForm
             // 
@@ -441,6 +483,10 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox tbHv;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox tbIterations;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox tbDaysInYear;
     }
 }
 
