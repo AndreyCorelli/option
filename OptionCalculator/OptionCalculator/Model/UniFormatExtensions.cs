@@ -10,6 +10,10 @@ using System.Xml;
 
 namespace OptionCalculator.Model
 {
+    /// <summary>
+    /// auxilary class
+    /// extension methods to format / parse strings
+    /// </summary>
     public static class UniFormatterExtensions
     {
         #region Classes, members, ctor

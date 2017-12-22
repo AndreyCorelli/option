@@ -8,7 +8,7 @@ namespace OptionCalculator
 {
     public partial class MainForm : Form
     {
-        private List<double> candles = new List<double>();
+        private List<double> prices = new List<double>();
 
         public MainForm()
         {
@@ -16,20 +16,27 @@ namespace OptionCalculator
             cbSide.SelectedIndex = 1;
         }
 
+        /// <summary>
+        /// pick the source data file and read prices in "prices" list
+        /// for future calculations
+        /// </summary>
         private void btnExplore_Click(object sender, EventArgs e)
         {
             if (File.Exists(tbPath.Text))
                 openFileDialog.FileName = tbPath.Text;
             if (openFileDialog.ShowDialog() != DialogResult.OK) return;
             tbPath.Text = openFileDialog.FileName;
-            candles = SourceCandles.ReadCandles(tbPath.Text);
-            if (candles.Count == 0)
+            prices = SourceCandles.ReadCandles(tbPath.Text);
+            if (prices.Count == 0)
                 MessageBox.Show("Source data was not read");
         }
 
+        /// <summary>
+        /// calculate the option's premium
+        /// </summary>
         private void btnCalc_Click(object sender, EventArgs e)
         {
-            if (candles.Count < 3) return;
+            if (prices.Count < 3) return;
 
             var contract = new OptionContract
             {
@@ -45,12 +52,14 @@ namespace OptionCalculator
             {
                 iterationsCount = tbIterations.Text.ToInt()
             };
-            var prem = calc.CalcPremium(candles, cbDetrend.Checked, contract, ExecutablePath.ExecPath);
+            var prem = calc.CalcPremium(prices, cbDetrend.Checked, contract, ExecutablePath.ExecPath);
             tbPremium.Text = $"{prem:F4}";
             tbHv.Text = $"{calc.HV:F4}";
-            //var mhv = calc.CalculateModelledVolatility();
         }
 
+        /// <summary>
+        /// make a random timeseries
+        /// </summary>
         private void btnMakeSeries_Click(object sender, EventArgs e)
         {
             if (saveFileDialog.ShowDialog() != DialogResult.OK) return;

@@ -5,13 +5,17 @@ using System.Reflection;
 
 namespace OptionCalculator.Model
 {
+    /// <summary>
+    /// a class to target the application's executable path
+    /// in a convenient formt
+    /// </summary>
     public static class ExecutablePath
     {
         private static string execFileName;
 
         private static string execPath;
         /// <summary>
-        /// путь к исполняемому файлу без завершающего слэш
+        /// executable's path without the trailing backcslash
         /// </summary>
         public static string ExecPath
         {
@@ -23,7 +27,7 @@ namespace OptionCalculator.Model
         }
 
         /// <summary>
-        /// имя исполняемого файла
+        /// executable's file name
         /// </summary>
         public static string ExecFileName
         {

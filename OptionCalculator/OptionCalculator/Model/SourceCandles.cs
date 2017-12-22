@@ -4,8 +4,15 @@ using System.Text;
 
 namespace OptionCalculator.Model
 {
+    /// <summary>
+    /// a class to read prices from a file
+    /// the file that may contain just prices or OHLC (candle) data
+    /// </summary>
     public static class SourceCandles
     {
+        /// <summary>
+        /// read data in OHLC format (candles), but return Close prices only
+        /// </summary>
         public static List<double> ReadCandles(string path)
         {
             var prices = new List<double>();
@@ -31,6 +38,10 @@ namespace OptionCalculator.Model
             return prices;
         }
 
+        /// <summary>
+        /// read the file provided line by line
+        /// each line contains one price
+        /// </summary>
         private static List<double> ReadScalars(string path)
         {
             var prices = new List<double>();

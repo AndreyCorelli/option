@@ -3,16 +3,26 @@ using System.Linq;
 
 namespace OptionCalculator.Model
 {
+    /// <summary>
+    /// candlestick data: open price, high, low and close prices
+    /// 
+    /// for the calculations we need Close price only
+    /// but sometimes we get candlistick data in *.csv format
+    /// </summary>
     public class Candle
     {
-        #region constants
-
         public static readonly char[] Separators = { '[', ']', ' ', ',', ';' };
+
         private static readonly int[] ShortTimeframes = { 240, 60, 30, 15, 5, 1 };
+        
+        public float Open { get; set; }
+        public float High { get; set; }
+        public float Low { get; set; }
+        public float Close { get; set; }
 
-        #endregion
+        public DateTime TimeOpen { get; set; }
 
-        #region constructors
+        public int Volume { get; set; }
 
         public Candle()
         {
@@ -36,24 +46,6 @@ namespace OptionCalculator.Model
             Close = c;
             TimeOpen = timeOpen;
         }
-
-        #endregion
-
-        #region properties
-
-        public float Open { get; set; }
-        public float High { get; set; }
-        public float Low { get; set; }
-        public float Close { get; set; }
-
-        public DateTime TimeOpen { get; set; }
-
-
-        public int Volume { get; set; }
-
-        #endregion
-
-        #region public
 
         public DateTime GetTimeClose(int timeframe)
         {
@@ -121,7 +113,5 @@ namespace OptionCalculator.Model
 
             throw new Exception($"Unknown timeframe: {timeframe}");
         }
-
-        #endregion
     }
 }
